@@ -4,13 +4,13 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using DatabaseEngine;
+using OpenNetMeter.Properties;
 
 namespace OpenNetMeter.Models
 {
     internal class ApplicationDB : IDisposable
     {
         private Database dB;
-        public const int DataStoragePeriodInDays = 60;
         /// <summary>
         /// creates a database file if it does not exist
         /// </summary>
@@ -22,9 +22,8 @@ namespace OpenNetMeter.Models
 
         public static string GetFilePath()
         {
-            string? appName = Assembly.GetEntryAssembly()?.GetName().Name;
-            string path = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-            path = Path.Combine(path, appName ?? "OpenNetMeter");
+            string path = SettingsManager.Current.Folder;
+            path = Path.Combine(path);
             Directory.CreateDirectory(path);
             return path;
         }
@@ -129,7 +128,7 @@ namespace OpenNetMeter.Models
                     {"@Day", date.Day.ToString() }
                 });
         }
-
+/*
         private void RemoveOldDate()
         {
             DateTime time = DateTime.Now;
@@ -150,7 +149,7 @@ namespace OpenNetMeter.Models
                 "(SELECT ID FROM Process WHERE ID NOT IN " +
                 "(SELECT DISTINCT ProcessID FROM ProcessDate))");
         }
-
+*/
         public void UpdateDatesInDB()
         {
             //insert todays date
@@ -159,10 +158,10 @@ namespace OpenNetMeter.Models
             //get invalid dateIDs
             //use these invalid dataIDs to remove the respective rows from processDate table
             //remove these IDs from date table
-            RemoveOldDate();
+            //RemoveOldDate();
             //compare processDate table processID column and process table processID column
             //remove rows from process table if they are not present in processDate table
-            RemoveOldProcess();
+            //RemoveOldProcess();
         }
 
         public int InsertUniqueRow_ProcessDateTable(long processID, long dateID, long dataReceived, long dataSent)

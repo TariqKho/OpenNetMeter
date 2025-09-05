@@ -93,7 +93,7 @@ namespace OpenNetMeter.ViewModels
             DateStart = DateTime.Today;
             DateEnd = DateTime.Today;
             DateMax = DateTime.Today;
-            DateMin = DateTime.Today.AddDays(-1 * ApplicationDB.DataStoragePeriodInDays);
+            DateMin = DateTime.MinValue;
         }
 
         private void DataUsageHistoryVM_PropertyChanged(object? sender, PropertyChangedEventArgs e)
