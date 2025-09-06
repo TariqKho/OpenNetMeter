@@ -19,6 +19,8 @@
                 <DataGridTextColumn Header="Current Data Sent" Binding="{Binding Value.CurrentDataSend, Converter={StaticResource converterBytes}}" HeaderStyle="{StaticResource DGCHeaderStyle2}" CellStyle="{StaticResource DGCellStyle2}"/>
                 <DataGridTextColumn Header="Total Data Recieved" Binding="{Binding Value.TotalDataRecv, Converter={StaticResource converterBytes}}" HeaderStyle="{StaticResource DGCHeaderStyle2}" CellStyle="{StaticResource DGCellStyle2}"/>
                 <DataGridTextColumn Header="Total Data Sent" Binding="{Binding Value.TotalDataSend, Converter={StaticResource converterBytes}}" HeaderStyle="{StaticResource DGCHeaderStyle2}" CellStyle="{StaticResource DGCellStyle2}"/>
+                <DataGridTextColumn Header="Process ID" Binding="{Binding Value.ProcessId}" HeaderStyle="{StaticResource DGCHeaderStyle2}" CellStyle="{StaticResource DGCellStyle2}"/>
+                
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

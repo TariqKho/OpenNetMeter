@@ -431,47 +431,47 @@ namespace OpenNetMeter.Models
         //upload events
         private void Kernel_UdpIpSendIPV6(UpdIpV6TraceData obj)
         {
-            SendProcessIPV6(obj.saddr, obj.daddr, obj.size, obj.ProcessName);
+            SendProcessIPV6(obj.saddr, obj.daddr, obj.size, obj.ProcessName,obj.ProcessID);
         }
 
         private void Kernel_UdpIpSend(UdpIpTraceData obj)
         {
-            SendProcess(obj.saddr, obj.daddr, obj.size, obj.ProcessName);
+            SendProcess(obj.saddr, obj.daddr, obj.size, obj.ProcessName,obj.ProcessID);
         }
 
         private void Kernel_TcpIpSendIPV6(TcpIpV6SendTraceData obj)
         {
-            SendProcessIPV6(obj.saddr, obj.daddr, obj.size, obj.ProcessName);
+            SendProcessIPV6(obj.saddr, obj.daddr, obj.size, obj.ProcessName,obj.ProcessID);
         }
 
         private void Kernel_TcpIpSend(TcpIpSendTraceData obj)
         {
-            SendProcess(obj.saddr, obj.daddr, obj.size, obj.ProcessName);
+            SendProcess(obj.saddr, obj.daddr, obj.size, obj.ProcessName,obj.ProcessID);
         }
 
         //download events    
         private void Kernel_UdpIpRecv(UdpIpTraceData obj)
         {
-            RecvProcess(obj.saddr, obj.daddr, obj.size, obj.ProcessName);
+            RecvProcess(obj.saddr, obj.daddr, obj.size, obj.ProcessName,obj.ProcessID);
         }
 
         private void Kernel_UdpIpRecvIPV6(UpdIpV6TraceData obj)
         {
-            RecvProcessIPV6(obj.saddr, obj.daddr, obj.size, obj.ProcessName);
+            RecvProcessIPV6(obj.saddr, obj.daddr, obj.size, obj.ProcessName,obj.ProcessID);
         }
 
         private void Kernel_TcpIpRecv(TcpIpTraceData obj)
         {
-            RecvProcess(obj.saddr, obj.daddr, obj.size, obj.ProcessName);
+            RecvProcess(obj.saddr, obj.daddr, obj.size, obj.ProcessName,obj.ProcessID);
         }
 
         private void Kernel_TcpIpRecvIPV6(TcpIpV6TraceData obj)
         {
-            RecvProcessIPV6(obj.saddr, obj.daddr, obj.size, obj.ProcessName);
+            RecvProcessIPV6(obj.saddr, obj.daddr, obj.size, obj.ProcessName,obj.ProcessID);
         }
 
         //calculate the Bytes sent and recieved
-        private void RecvProcess(in IPAddress src, in IPAddress dest, in int size, in string name)
+        private void RecvProcess(in IPAddress src, in IPAddress dest, in int size, in string name, in int ProcesId)
         {
             bool ipCompSrc = ByteArray.Compare(src.GetAddressBytes(), localIPv4);
             bool ipCompDest = ByteArray.Compare(dest.GetAddressBytes(), localIPv4);
@@ -481,12 +481,12 @@ namespace OpenNetMeter.Models
                     SettingsManager.Current.NetworkType == 1 ? (ipCompSrc ? !IsIPv4IPv6Private(dest) : !IsIPv4IPv6Private(src)) : //public
                     SettingsManager.Current.NetworkType == 0 ? (ipCompSrc ?  IsIPv4IPv6Private(dest) :  IsIPv4IPv6Private(src)) : false) //private
                 {
-                    Recv(name, size);
+                    Recv(name, size,ProcesId);
                 }
             }
         }
 
-        private void RecvProcessIPV6(in IPAddress src, in IPAddress dest, in int size, in string name)
+        private void RecvProcessIPV6(in IPAddress src, in IPAddress dest, in int size, in string name,in int processId)
         {
             bool ipCompSrc = ByteArray.Compare(src.GetAddressBytes(), localIPv6);
             bool ipCompDest = ByteArray.Compare(dest.GetAddressBytes(), localIPv6);
@@ -496,12 +496,12 @@ namespace OpenNetMeter.Models
                     SettingsManager.Current.NetworkType == 1 ? (ipCompSrc ? !IsIPv4IPv6Private(dest) : !IsIPv4IPv6Private(src)) : //public
                     SettingsManager.Current.NetworkType == 0 ? (ipCompSrc ?  IsIPv4IPv6Private(dest) :  IsIPv4IPv6Private(src)) : false) //private
                 {
-                    Recv(name, size);
+                    Recv(name, size,processId);
                 }
             }
         }
 
-        private void SendProcess(in IPAddress src, in IPAddress dest, in int size, in string name)
+        private void SendProcess(in IPAddress src, in IPAddress dest, in int size, in string name,in int processId)
         {
             bool ipCompSrc = ByteArray.Compare(src.GetAddressBytes(), localIPv4);
             bool ipCompDest = ByteArray.Compare(dest.GetAddressBytes(), localIPv4);
@@ -511,11 +511,11 @@ namespace OpenNetMeter.Models
                     SettingsManager.Current.NetworkType == 1 ? (ipCompSrc ? !IsIPv4IPv6Private(dest) : !IsIPv4IPv6Private(src)) : //public
                     SettingsManager.Current.NetworkType == 0 ? (ipCompSrc ?  IsIPv4IPv6Private(dest) :  IsIPv4IPv6Private(src)) : false) //private
                 {
-                    Send(name, size);
+                    Send(name, size,processId);
                 }
             }
         }
-        private void SendProcessIPV6(in IPAddress src, in IPAddress dest, in int size, in string name)
+        private void SendProcessIPV6(in IPAddress src, in IPAddress dest, in int size, in string name,in int processId)
         {
             bool ipCompSrc = ByteArray.Compare(src.GetAddressBytes(), localIPv6);
             bool ipCompDest = ByteArray.Compare(dest.GetAddressBytes(), localIPv6);
@@ -525,7 +525,7 @@ namespace OpenNetMeter.Models
                     SettingsManager.Current.NetworkType == 1 ? (ipCompSrc ? !IsIPv4IPv6Private(dest) : !IsIPv4IPv6Private(src)) : //public
                     SettingsManager.Current.NetworkType == 0 ? (ipCompSrc ?  IsIPv4IPv6Private(dest) :  IsIPv4IPv6Private(src)) : false) //private
                 {
-                    Send(name, size);
+                    Send(name, size,processId);
                 }
             }
         }
@@ -537,26 +537,28 @@ namespace OpenNetMeter.Models
         // When accessing the buffer memory to show in GUI, Recv() alternates and adds the process details to the initial memory container (MyProcesses)
         // The function alternates between these 2 memory containers.
         //
-        private void Recv(string name, in int size)
+        private void Recv(string name, in int size, int processId)
         {
             CurrentSessionDownloadData += (long)size;
 
             if (name == "")
                 name = "System";
+            if (processId < 0 )
+                processId = -1;
 
-            if(IsBufferTime)
+            if (IsBufferTime)
             {
-                lock(MyProcessesBuffer!)
+                lock (MyProcessesBuffer!)
                 {
-                    MyProcessesBuffer!.TryAdd(name, new MyProcess_Small(name, 0, 0));
+                    MyProcessesBuffer!.TryAdd(name, new MyProcess_Small(name, 0, 0,processId));
                     MyProcessesBuffer[name]!.CurrentDataRecv += (long)size;
                 }
             }
             else
             {
-                lock(MyProcesses!)
+                lock (MyProcesses!)
                 {
-                    MyProcesses!.TryAdd(name, new MyProcess_Small(name, 0, 0));
+                    MyProcesses!.TryAdd(name, new MyProcess_Small(name, 0, 0,processId));
                     MyProcesses[name]!.CurrentDataRecv += (long)size;
                 }
             }
@@ -565,27 +567,29 @@ namespace OpenNetMeter.Models
             //    Debug.WriteLine($"but whyyy {name} | recv");
         }
 
-        private void Send(string name, in int size)
+        private void Send(string name, in int size, int processId)
         {
             CurrentSessionUploadData += (long)size;
 
             if (name == "")
                 name = "System";
-
+            if (processId < 0 )
+                processId = -1;
+                
             if (IsBufferTime)
             {
-                lock (MyProcessesBuffer!) 
+                lock (MyProcessesBuffer!)
                 {
-                    MyProcessesBuffer!.TryAdd(name, new MyProcess_Small(name, 0, 0));
+                    MyProcessesBuffer!.TryAdd(name, new MyProcess_Small(name, 0, 0, processId));
                     MyProcessesBuffer[name]!.CurrentDataSend += (long)size;
                 }
-                    
+
             }
             else
             {
-                lock (MyProcesses!) 
+                lock (MyProcesses!)
                 {
-                    MyProcesses!.TryAdd(name, new MyProcess_Small(name, 0, 0));
+                    MyProcesses!.TryAdd(name, new MyProcess_Small(name, 0, 0, processId));
                     MyProcesses[name]!.CurrentDataSend += (long)size;
                 }
             }

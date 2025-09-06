@@ -210,7 +210,7 @@ namespace OpenNetMeter.ViewModels
                         {
                             foreach (KeyValuePair<string, MyProcess_Small?> app in netProc.MyProcesses) //the contents of this loops remain only for a sec (related to NetworkProcess.cs=>CaptureNetworkSpeed())
                             {
-                                dudvm.MyProcesses.TryAdd(app.Key, new MyProcess_Big(app.Key, 0, 0, 0, 0));
+                                dudvm.MyProcesses.TryAdd(app.Key, new MyProcess_Big(app.Key, 0, 0, 0, 0,0));
                                 if (app.Value!.CurrentDataRecv == 0 && app.Value!.CurrentDataSend == 0)
                                 {
                                     Debug.WriteLine($"Both zero {app.Key}");
@@ -219,6 +219,7 @@ namespace OpenNetMeter.ViewModels
                                 dudvm.MyProcesses[app.Key].CurrentDataSend = app.Value!.CurrentDataSend;
                                 dudvm.MyProcesses[app.Key].TotalDataRecv += app.Value!.CurrentDataRecv;
                                 dudvm.MyProcesses[app.Key].TotalDataSend += app.Value!.CurrentDataSend;
+                                dudvm.MyProcesses[app.Key].ProcessId = app.Value!.ProcessId;
 
                                 /*
                                 Debug.WriteLine($"CurrentDataRecv:  {dudvm.MyProcesses[app.Key].CurrentDataRecv} , "    +
@@ -230,7 +231,7 @@ namespace OpenNetMeter.ViewModels
                                 lock (netProc.PushToDBBuffer)
                                 {
                                     //push data to a buffer which will be pushed to the DB later
-                                    netProc.PushToDBBuffer!.TryAdd(app.Key, new MyProcess_Small(app.Key, 0, 0));
+                                    netProc.PushToDBBuffer!.TryAdd(app.Key, new MyProcess_Small(app.Key, 0, 0, 0));
                                     netProc.PushToDBBuffer[app.Key]!.CurrentDataRecv += dudvm.MyProcesses[app.Key].CurrentDataRecv;
                                     netProc.PushToDBBuffer[app.Key]!.CurrentDataSend += dudvm.MyProcesses[app.Key].CurrentDataSend;
                                 }
@@ -246,7 +247,7 @@ namespace OpenNetMeter.ViewModels
                             foreach (KeyValuePair<string, MyProcess_Small?> app in netProc.MyProcessesBuffer) //the contents of this loops remain only for a sec (related to NetworkProcess.cs=>CaptureNetworkSpeed())
                             {
                                 Debug.WriteLine("BUFFEEERRRRR!!!!!");
-                                dudvm.MyProcesses.TryAdd(app.Key, new MyProcess_Big(app.Key, 0, 0, 0, 0));
+                                dudvm.MyProcesses.TryAdd(app.Key, new MyProcess_Big(app.Key, 0, 0, 0, 0,0));
                                 if (app.Value!.CurrentDataRecv == 0 && app.Value!.CurrentDataSend == 0)
                                 {
                                     Debug.WriteLine($"Both zero {app.Key}");
@@ -255,11 +256,12 @@ namespace OpenNetMeter.ViewModels
                                 dudvm.MyProcesses[app.Key].CurrentDataSend += app.Value!.CurrentDataSend;
                                 dudvm.MyProcesses[app.Key].TotalDataRecv += app.Value!.CurrentDataRecv;
                                 dudvm.MyProcesses[app.Key].TotalDataSend += app.Value!.CurrentDataSend;
+                                dudvm.MyProcesses[app.Key].ProcessId = app.Value!.ProcessId;
 
                                 lock (netProc.PushToDBBuffer)
                                 {
                                     //push data to a buffer which will be pushed to the DB later
-                                    netProc.PushToDBBuffer!.TryAdd(app.Key, new MyProcess_Small(app.Key, 0, 0));
+                                    netProc.PushToDBBuffer!.TryAdd(app.Key, new MyProcess_Small(app.Key, 0, 0,0));
                                     netProc.PushToDBBuffer[app.Key]!.CurrentDataRecv = dudvm.MyProcesses[app.Key].TotalDataRecv;
                                     netProc.PushToDBBuffer[app.Key]!.CurrentDataRecv = dudvm.MyProcesses[app.Key].TotalDataSend;
                                 }
