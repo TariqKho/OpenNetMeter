@@ -24,7 +24,6 @@
         <v:NetSpeedFormatConverter x:Key="netSpeedFormatConverter"/>
     </Window.Resources>
 
-    <Border Style="{StaticResource BorderColor}">
         <Grid Background="{Binding BackgroundColor}" >
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
@@ -50,6 +49,5 @@
                 <TextBlock Padding="0" FontSize="12" Style="{StaticResource FontColor1}">ps</TextBlock>
             </StackPanel>
         </Grid>
-    </Border>
     
 </Window>
