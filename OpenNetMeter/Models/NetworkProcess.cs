@@ -325,7 +325,7 @@ namespace OpenNetMeter.Models
                     }
 #if DEBUG
                     sw1.Stop();
-                    Debug.WriteLine($"elapsed time (DBpush): {sw1.ElapsedMilliseconds} | time {DateTime.Now.ToString("O")}");
+                    //Debug.WriteLine($"elapsed time (DBpush): {sw1.ElapsedMilliseconds} | time {DateTime.Now.ToString("O")}");
 #endif
                     //Debug.WriteLine($"current thread (CaptureNetworkSpeed): {Thread.CurrentThread.ManagedThreadId}");
                     //Debug.WriteLine($"networkProcess {DownloadSpeed}");
@@ -373,7 +373,7 @@ namespace OpenNetMeter.Models
                     tempDownload = CurrentSessionDownloadData;
 #if DEBUG
                     sw1.Stop();
-                    Debug.WriteLine($"elapsed time (CaptureNetworkSpeed): {sw1.ElapsedMilliseconds} | time {DateTime.Now.ToString("O")}");
+                    //Debug.WriteLine($"elapsed time (CaptureNetworkSpeed): {sw1.ElapsedMilliseconds} | time {DateTime.Now.ToString("O")}");
 #endif
                     //Debug.WriteLine($"current thread (CaptureNetworkSpeed): {Thread.CurrentThread.ManagedThreadId}");
                     //Debug.WriteLine($"networkProcess {DownloadSpeed}");

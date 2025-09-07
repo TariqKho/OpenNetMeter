@@ -66,7 +66,8 @@ namespace OpenNetMeter.Models
                 "Process" +
                 "(" +
                     "ID INTEGER PRIMARY KEY NOT NULL, " +
-                    "Name TEXT NOT NULL UNIQUE" +
+                    "Name TEXT NOT NULL UNIQUE," +
+                    "PreferedName TEXT NOT NULL" +
                 ")");
         }
 
@@ -108,8 +109,8 @@ namespace OpenNetMeter.Models
         public int InsertUniqueRow_ProcessTable(string appName)
         {
             return dB.RunSQLiteNonQuery("INSERT OR IGNORE INTO " +
-                "Process(Name) " +
-                "VALUES(@Name)",
+                "Process(Name,PreferedName) " +
+                "VALUES(@Name,@Name)",
                 new string[,]
                 {
                     {"@Name", appName }
@@ -128,28 +129,28 @@ namespace OpenNetMeter.Models
                     {"@Day", date.Day.ToString() }
                 });
         }
-/*
-        private void RemoveOldDate()
-        {
-            DateTime time = DateTime.Now;
-            time = time.AddDays(-1 * DataStoragePeriodInDays);
+        /*
+                private void RemoveOldDate()
+                {
+                    DateTime time = DateTime.Now;
+                    time = time.AddDays(-1 * DataStoragePeriodInDays);
 
-            dB.RunSQLiteNonQuery("DELETE FROM " +
-                "Date " +
-                "WHERE " +
-                "(Year * 10000 + Month * 100 + day) " +
-                "< " +
-                $"({time.Year * 10000 + time.Month * 100 + time.Day})");
-        }
+                    dB.RunSQLiteNonQuery("DELETE FROM " +
+                        "Date " +
+                        "WHERE " +
+                        "(Year * 10000 + Month * 100 + day) " +
+                        "< " +
+                        $"({time.Year * 10000 + time.Month * 100 + time.Day})");
+                }
 
-        private void RemoveOldProcess()
-        {
-            dB.RunSQLiteNonQuery("DELETE FROM " +
-                "Process WHERE ID IN " +
-                "(SELECT ID FROM Process WHERE ID NOT IN " +
-                "(SELECT DISTINCT ProcessID FROM ProcessDate))");
-        }
-*/
+                private void RemoveOldProcess()
+                {
+                    dB.RunSQLiteNonQuery("DELETE FROM " +
+                        "Process WHERE ID IN " +
+                        "(SELECT ID FROM Process WHERE ID NOT IN " +
+                        "(SELECT DISTINCT ProcessID FROM ProcessDate))");
+                }
+        */
         public void UpdateDatesInDB()
         {
             //insert todays date
@@ -185,7 +186,7 @@ namespace OpenNetMeter.Models
                 "SET " +
                 $"DataReceived = DataReceived + @DataReceived, " +
                 $"DataSent = DataSent + @DataSent " +
-                "WHERE ProcessID = @ProcessID AND DateID = @DateID", 
+                "WHERE ProcessID = @ProcessID AND DateID = @DateID",
                 new string[,]
                 {
                     { "@DataReceived", dataReceived.ToString()},
@@ -197,7 +198,7 @@ namespace OpenNetMeter.Models
 
         public List<List<object>> GetDataSum_ProcessDateTable(DateTime date1, DateTime date2)
         {
-            List<List<object>> dateIDs = dB.GetMultipleCellData("SELECT p1.Name, SUM(pd1.DataReceived), SUM(pd1.DataSent) " +
+            List<List<object>> dateIDs = dB.GetMultipleCellData("SELECT p1.Name, SUM(pd1.DataReceived), SUM(pd1.DataSent), p1.PreferedName " +
                 "FROM ProcessDate pd1 " +
                 "JOIN Process p1 ON p1.ID = pd1.ProcessID " +
                 "WHERE DateID IN " +
@@ -225,7 +226,7 @@ namespace OpenNetMeter.Models
                     { "@Day", DateTime.Today.Day.ToString()}
                 });
 
-            if(sum.Count == 1)
+            if (sum.Count == 1)
             {
                 if (sum[0].Count == 2)
                 {
@@ -234,7 +235,7 @@ namespace OpenNetMeter.Models
                 }
             }
 
-            return (0,0);
+            return (0, 0);
         }
 
         public long GetID_DateTable(DateTime time)
@@ -256,7 +257,7 @@ namespace OpenNetMeter.Models
 
             return Convert.ToInt64(test ?? -1);
         }
-        
+
         public long GetID_ProcessTable(string appName)
         {
             object? test = dB.GetSingleCellData("SELECT ID From " +
@@ -269,6 +270,33 @@ namespace OpenNetMeter.Models
                 });
 
             return Convert.ToInt64(test ?? -1);
+        }
+        public object getProcessName(string name)
+        {
+            object? test = dB.GetMultipleCellData("SELECT * From " +
+                "Process " +
+                "WHERE " +
+                $"Name = @Name ",
+                new string[,]
+                {
+                    {"@Name", name}
+                });
+
+            return test;
+        }
+
+        public bool SetPreferredName(string name, string preferedName)
+        {
+            string query = "UPDATE Process SET PreferedName = @PreferedName WHERE Name = @Name";
+
+            var parameters = new string[,]
+    {
+        { "@PreferedName", preferedName },
+        { "@Name", name }
+    };
+
+            int rowsAffected = dB.RunSQLiteNonQuery(query, parameters);
+            return rowsAffected > 0;
         }
 
         public void Dispose()

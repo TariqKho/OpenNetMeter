@@ -13,7 +13,7 @@ using System.Windows.Input;
 
 namespace OpenNetMeter.ViewModels
 {
-    
+
     public class DataUsageHistoryVM : IDisposable, INotifyPropertyChanged
     {
         public DateTime DateMax { get; private set; }
@@ -22,12 +22,12 @@ namespace OpenNetMeter.ViewModels
         public DateTime DateEnd { get; set; }
 
         private string? selectedProfile;
-        public string? SelectedProfile 
+        public string? SelectedProfile
         {
             get { return selectedProfile; }
             set
             {
-                if(value != selectedProfile)
+                if (value != selectedProfile)
                 {
                     selectedProfile = value;
                     OnPropertyChanged("SelectedProfile");
@@ -39,7 +39,7 @@ namespace OpenNetMeter.ViewModels
         public ObservableCollection<MyProcess_Small> MyProcesses { get; set; }
 
         private long totalDownloadData;
-        public long TotalDownloadData 
+        public long TotalDownloadData
         {
             get { return totalDownloadData; }
             set
@@ -67,7 +67,6 @@ namespace OpenNetMeter.ViewModels
         }
 
         public ICommand FilterBtn { get; set; }
-
         private FileSystemWatcher watcher;
         public DataUsageHistoryVM()
         {
@@ -133,20 +132,26 @@ namespace OpenNetMeter.ViewModels
             TotalUploadData = 0;
             //show confirmation dialog
             Debug.WriteLine($"Filter {DateStart.ToString("d")} | {DateEnd.ToString("d")}");
-            if(SelectedProfile != null)
+            if (SelectedProfile != null)
             {
-                using (ApplicationDB dB = new ApplicationDB(SelectedProfile, new string[] { "Read Only=True"}))
+                using (ApplicationDB dB = new ApplicationDB(SelectedProfile, new string[] { "Read Only=True" }))
                 {
                     List<List<object>> dataStats = dB.GetDataSum_ProcessDateTable(DateStart, DateEnd);
-                    for(int i = 0; i< dataStats.Count; i++)
+                    for (int i = 0; i < dataStats.Count; i++)
                     {
-                        if(dataStats[i].Count == 3)
+                        if (dataStats[i].Count == 4)
                         {
-                            if(!Convert.IsDBNull(dataStats[i][0]) && !Convert.IsDBNull(dataStats[i][1]) && !Convert.IsDBNull(dataStats[i][2]))
+                            if (!Convert.IsDBNull(dataStats[i][0]) && !Convert.IsDBNull(dataStats[i][1]) && !Convert.IsDBNull(dataStats[i][2]) && !Convert.IsDBNull(dataStats[i][3]))
                             {
-                                //here
-                                MyProcesses.Add(new MyProcess_Small(Convert.ToString(dataStats[i][0])!, Convert.ToInt64(dataStats[i][1]), Convert.ToInt64(dataStats[i][2]),0));
+                                var name = Convert.ToString(dataStats[i][0])!;
 
+                                //Set PrefereName as name if it has one
+                                if (dataStats[i][0].ToString() != dataStats[i][3].ToString())
+                                {
+                                    name = Convert.ToString(dataStats[i][3])!;
+                                }
+
+                                MyProcesses.Add(new MyProcess_Small(name, Convert.ToInt64(dataStats[i][1]), Convert.ToInt64(dataStats[i][2]), 0));
                                 TotalDownloadData += Convert.ToInt64(dataStats[i][1]);
                                 TotalUploadData += Convert.ToInt64(dataStats[i][2]);
                             }
@@ -156,12 +161,11 @@ namespace OpenNetMeter.ViewModels
                 }
             }
         }
-
         public void GetAllDBFiles()
         {
             string[] fileArray = Directory.GetFiles(ApplicationDB.GetFilePath(), "*.sqlite");
             Profiles?.Clear();
-            for(int i = 0; i<fileArray.Length; i++)
+            for (int i = 0; i < fileArray.Length; i++)
             {
                 Profiles?.Add(Path.GetFileNameWithoutExtension(fileArray[i]));
                 //Debug.WriteLine(Path.GetFileNameWithoutExtension(fileArray[i]));
