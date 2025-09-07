@@ -57,3 +57,17 @@ These are replaced by the mini widget
 ![TrayPopup_GIF1](https://user-images.githubusercontent.com/27722888/151661088-71349a72-f687-48be-ad33-805f7bf6771d.gif)
 
 ![DeskBand_GIF1](https://user-images.githubusercontent.com/27722888/153745070-669027d8-56eb-4982-b009-1be23e5b5d51.gif)
+
+
+To Do
+
+Centralize db
+Change mini widget color dynamically
+add percentage bar in history
+back up peridcally based on setting
+Abilty to group process so that it count as one e.g (steamWebHelper and Steam should be able to group together as steam)
+
+Done
+Add setting to change db file location
+Add proccess id in Detailed tab
+Add Preferred name
