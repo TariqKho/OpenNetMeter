@@ -284,7 +284,19 @@ namespace OpenNetMeter.Models
 
             return test;
         }
+        public object GetPreferedName(string name)
+        {
+            object? test = dB.GetMultipleCellData("SELECT * From " +
+                "Process " +
+                "WHERE " +
+                $"PreferedName = @Name ",
+                new string[,]
+                {
+                    {"@Name", name}
+                });
 
+            return test;
+        }
         public bool SetPreferredName(string name, string preferedName)
         {
             string query = "UPDATE Process SET PreferedName = @PreferedName WHERE Name = @Name";

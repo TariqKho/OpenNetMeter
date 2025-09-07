@@ -46,16 +46,32 @@ namespace OpenNetMeter.Views
 
             if (SelectedItem == null)
                 return;
-            var namesObj = viewNamesVM.getNames(SelectedItem.Name!);
 
-            // Cast to List<List<object>>
-            var namesList = ((List<List<object>>)namesObj)[0];
-            // Access the first inner list
+            string ItemId = "";
+            string ItemName = "";
+            string ItemPreferedName = "";
+            //Original name else SearchPrefered
 
-            // Access the first item in that inner list
-            var ItemId = namesList[0].ToString()!;
-            var ItemName = namesList[1].ToString()!;
-            var ItemPreferedName = namesList[2].ToString()!;
+            dynamic namesObj = viewNamesVM.getOriginalName(SelectedItem.Name!);
+            if (namesObj.Count > 0)
+            {
+                // Cast to List<List<object>>
+                var namesList = ((List<List<object>>)namesObj)[0];
+                // Access the first item in that inner list
+                ItemId = namesList[0].ToString()!;
+                ItemName = namesList[1].ToString()!;
+                ItemPreferedName = namesList[2].ToString()!;
+
+            }
+            else
+            {
+                var PreferednamesObj = viewNamesVM.getPreferedName(SelectedItem.Name!);
+                var namesList = ((List<List<object>>)PreferednamesObj)[0];
+                // Access the first item in that inner list
+                ItemId = namesList[0].ToString()!;
+                ItemName = namesList[1].ToString()!;
+                ItemPreferedName = namesList[2].ToString()!;
+            }
             var dialog = new ThreeTextfieldBox(
                         ItemId,
                         ItemName,
@@ -72,7 +88,8 @@ namespace OpenNetMeter.Views
                 else
                 {
                     MessageBox.Show("Prefered Name already exist in database", "Error", MessageBoxButton.OK);
-
+                    //prevent the form from closing
+                    MouseDoubleClickBtn(sender, e);
                 }
 
             }

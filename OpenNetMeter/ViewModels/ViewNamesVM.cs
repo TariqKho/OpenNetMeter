@@ -23,12 +23,22 @@ public class ViewNamesVM : INotifyPropertyChanged
     {
         IsVisible = Visibility.Hidden;
     }
-    public object getNames(string name)
+    public object getOriginalName(string name)
     {
         var SelectedProfile = "WiFi 2(HUAWEI-5G-vp3X)";
         using (ApplicationDB dB = new ApplicationDB(SelectedProfile, new string[] { "Read Only=True" }))
         {
             object obj = dB.getProcessName(name);
+            return obj;
+        }
+
+    }
+        public object getPreferedName(string name)
+    {
+        var SelectedProfile = "WiFi 2(HUAWEI-5G-vp3X)";
+        using (ApplicationDB dB = new ApplicationDB(SelectedProfile, new string[] { "Read Only=True" }))
+        {
+            object obj = dB.GetPreferedName(name);
             return obj;
         }
 
@@ -40,15 +50,13 @@ public class ViewNamesVM : INotifyPropertyChanged
         {
             try
             {
-                List<object> names = new List<object>();
                 //check if there is already a process with its original name as the new one
-                object pn = dB.getProcessName(PreferedName);
-
-                if (pn.ToString() == PreferedName)
+                dynamic check1 = dB.getProcessName(PreferedName);
+                dynamic check2 = dB.GetPreferedName(PreferedName);
+                if (check1.Count == 0 && check2.Count == 0)
                 {
                     dB.SetPreferredName(Orignalname, PreferedName);
                     return 1;
-
                 }
                 return 0;
 
