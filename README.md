@@ -64,7 +64,7 @@ These are replaced by the mini widget
 - Centralize db
 - Change mini widget color dynamically
 - add percentage bar in history
-- back up peridcally based on setting
+- back up periodcally based on setting
 - Abilty to group process so that it count as one e.g (steamWebHelper and Steam should be able to group together as steam)
 
 - Done
