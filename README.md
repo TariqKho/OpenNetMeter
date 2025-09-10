@@ -61,13 +61,13 @@ These are replaced by the mini widget
 
 - To Do  
 
-- Centralize db
-- Change mini widget color dynamically
-- add percentage bar in history
-- back up periodcally based on setting
-- Abilty to group process so that it count as one e.g (steamWebHelper and Steam should be able to group together as steam)
+- Centralize db 2
+- Change mini widget color dynamically 3
+- add percentage bar in history 2 
+- back up periodcally based on setting 1 
+- Abilty to group process so that it count as one e.g (steamWebHelper and Steam should be able to group together as steam) 3
 
 - Done
-- Add setting to change db file location
+- Add setting to change db file location 
 - Add proccess id in Detailed tab
-- Add Preferred name
+- Add Preferred name (still need to add auto refresh page in history)
